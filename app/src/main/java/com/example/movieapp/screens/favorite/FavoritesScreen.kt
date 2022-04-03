@@ -41,7 +41,7 @@ fun FavoritesScreen(navController: NavController = rememberNavController()) {
             }
         })
     {
-        MainContent(movieList = getMovies().subList(2, 5))
+        MainContent(movieList = getMovies().subList(4, 7))
     }
 }
 
