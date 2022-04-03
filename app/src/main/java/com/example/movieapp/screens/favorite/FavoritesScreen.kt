@@ -1,7 +1,11 @@
-package com.example.movieapp.screens.detail
+package com.example.movieapp.screens.favorite
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -14,53 +18,39 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.movieapp.models.Movie
 import com.example.movieapp.models.getMovies
-import com.example.movieapp.widgets.HorizontalScrollableImageView
 import com.example.movieapp.widgets.MovieRow
 
 @Preview(showBackground = true)
 @Composable
-fun DetailScreen(navController: NavController = rememberNavController(),
-                 movieId: String? = getMovies()[0].id){
-    val movie = filterMovie(movieId = movieId)
+fun FavoritesScreen(navController: NavController = rememberNavController()) {
 
     Scaffold(
         topBar = {
-            TopAppBar(backgroundColor = Color.Cyan, elevation = 3.dp){
+            TopAppBar(backgroundColor = Color.Cyan, elevation = 3.dp) {
                 Row {
                     Icon(imageVector = Icons.Default.ArrowBack,
-                        contentDescription = "Arrow Back",
+                        contentDescription = "Arrow back",
                         modifier = Modifier.clickable {
                             navController.popBackStack() //go back to last screen
                         })
+
                     Spacer(modifier = Modifier.width(20.dp))
-                    Text(text = movie.title)
+
+                    Text(text = "My Favorite Movies", style = MaterialTheme.typography.h6)
                 }
             }
-        }
-    ){
-        MainContent(movie = movie)
+        })
+    {
+        MainContent(movieList = getMovies().subList(2, 5))
     }
 }
 
 @Composable
-fun MainContent(movie: Movie){
-    Surface(modifier = Modifier
-        .fillMaxWidth()
-        .fillMaxHeight()) {
-        Column {
-            MovieRow(movie = movie)
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            Divider()
-
-            Text(text = movie.title, style = MaterialTheme.typography.h5)
-
-            HorizontalScrollableImageView(movie = movie)
+fun MainContent(movieList: List<Movie>) {
+    LazyColumn {
+        items(movieList) { movie ->
+            MovieRow(movie = movie) {
+            }
         }
     }
-}
-
-fun filterMovie(movieId: String?) : Movie{
-    return getMovies().filter { movie -> movie.id == movieId}[0]
 }
