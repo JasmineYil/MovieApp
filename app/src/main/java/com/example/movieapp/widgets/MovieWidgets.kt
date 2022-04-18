@@ -21,20 +21,21 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberImagePainter
 import coil.transform.CircleCropTransformation
 import com.example.movieapp.models.Movie
 import com.example.movieapp.models.getMovies
-import com.example.movieapp.ui.theme.MovieAppTheme
 
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun MovieRow(movie: Movie = getMovies()[0],
              onItemClick: (String) -> Unit = {},
-
+             onDeleteClick: (Movie) -> Unit = {},
+             onAddClick: (Movie) -> Unit = {},
+             favorite: Boolean,
+             favoriteIcon: Boolean
     ){
     //             content: @Composable () -> Unit = {}
     var movieDescriptions by remember{
@@ -87,10 +88,20 @@ fun MovieRow(movie: Movie = getMovies()[0],
                     }
                 }
             }
-            // TODO: Soll nicht in FAVORITESSCREEN angezeigt werden
+            if (favoriteIcon){
+                Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.End
+                ){
+                    FavoriteIcon(
+                        movie = movie,
+                        onAddClick = { movie -> onAddClick(movie)},
+                        onDeleteClick = { movie -> onDeleteClick(movie) },
+                        favorite = favorite)
+                }
+            }
+            /*
             Column (modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.End) {
                 FavoriteIcon()
-            }
+            }*/
         }
     }
 }
@@ -114,8 +125,12 @@ fun HorizontalScrollableImageView(movie: Movie = getMovies()[0]){
 
 @Composable
 fun FavoriteIcon(
-
+    movie: Movie,
+    onAddClick: (Movie) -> Unit,
+    onDeleteClick: (Movie) -> Unit,
+    favorite: Boolean = false,
 ){
+    /*
     var iconClick by remember{
         mutableStateOf(false)
     }
@@ -131,14 +146,12 @@ fun FavoriteIcon(
                 Color.Cyan)
         }
     }
-
-}
-
-
-@Preview(showBackground = true)
-@Composable
-fun DefaultPreview() {
-    MovieAppTheme {
-        MovieRow()
+     */
+    if (favorite) {
+        IconButton(onClick = { onDeleteClick(movie) }){
+            Icon(Icons.Default.Favorite, contentDescription = "FavoriteClicked", tint = Color.Cyan)}
+    } else {
+        IconButton(onClick = { onAddClick(movie) }) {
+            Icon(Icons.Default.FavoriteBorder, contentDescription = "FavoriteNotClicked", tint = Color.Cyan)}
     }
 }

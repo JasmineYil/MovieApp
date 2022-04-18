@@ -12,12 +12,11 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.movieapp.models.Movie
-import com.example.movieapp.models.getMovies
+import com.example.movieapp.navigation.MovieScreens
 import com.example.movieapp.viewmodels.FavoritesViewModel
 import com.example.movieapp.widgets.MovieRow
 
@@ -43,20 +42,35 @@ fun FavoritesScreen(navController: NavController = rememberNavController(),
         })
     {
         MainContent(
-            movieList = viewModel.favoriteMovies
-        )
-
-        //Hardcoded favorites:
-        //MainContent(movieList = getMovies().subList(4, 7))
+            movieList = viewModel.favoriteMovies,
+            navController = navController,
+            onAddClick = { movie -> viewModel.addFavorites(movie)},
+            onDeleteClick = { movie -> viewModel.removeFavorites(movie) },
+            favoriteIcon = false
+            )
+        //Hardcoded favorites: MainContent(movieList = getMovies().subList(4, 7))
     }
 }
 
 @Composable
-fun MainContent(movieList: List<Movie>) {
+fun MainContent(
+    movieList: List<Movie>,
+    navController: NavController,
+    onAddClick: (Movie) -> Unit = {},
+    onDeleteClick: (Movie) -> Unit = {},
+    favorite: @Composable (Movie) -> Boolean = { false },
+    favoriteIcon: Boolean
+) {
     LazyColumn {
         items(movieList) { movie ->
-            MovieRow(movie = movie) {
-            }
+            MovieRow(
+                movie = movie,
+                onItemClick = { movieId -> navController.navigate(route = MovieScreens.DetailScreen.name + "/$movieId") },
+                onAddClick = { onAddClick(movie) },
+                onDeleteClick = { onDeleteClick(movie) },
+                favorite = favorite(movie),
+                favoriteIcon = favoriteIcon
+            )
         }
     }
 }

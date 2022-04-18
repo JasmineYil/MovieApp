@@ -40,18 +40,34 @@ fun DetailScreen(navController: NavController = rememberNavController(),
         }
     ){
         MainContent(
-            movie = movie
+            movie = movie,
+            onAddClick = { movie -> viewModel.addFavorites(movie) },
+            onDeleteClick = { movie -> viewModel.removeFavorites(movie) },
+            favorite = { movie -> viewModel.isFavorite(movie = movie) },
+            favoriteIcon = true
         )
     }
 }
 
 @Composable
-fun MainContent(movie: Movie){
+fun MainContent(
+    movie: Movie,
+    onAddClick: (Movie) -> Unit = {},
+    onDeleteClick: (Movie) -> Unit = {},
+    favorite: (Movie) -> Boolean,
+    favoriteIcon: Boolean
+){
     Surface(modifier = Modifier
         .fillMaxWidth()
         .fillMaxHeight()) {
         Column {
-            MovieRow(movie = movie)
+            MovieRow(
+                movie = movie,
+                onAddClick = { onAddClick(movie) },
+                onDeleteClick = { onDeleteClick(movie) },
+                favorite = favorite(movie),
+                favoriteIcon = favoriteIcon
+            )
 
             Spacer(modifier = Modifier.height(8.dp))
 

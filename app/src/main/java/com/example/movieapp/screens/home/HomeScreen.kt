@@ -22,8 +22,8 @@ import com.example.movieapp.viewmodels.FavoritesViewModel
 import com.example.movieapp.widgets.MovieRow
 
 @Composable
-fun HomeScreen(navController: NavController = rememberNavController(),
-               viewModel: FavoritesViewModel) {
+fun HomeScreen(navController: NavController = rememberNavController(), viewModel: FavoritesViewModel) {
+
     var showMenu by remember{
         mutableStateOf(false)
     }
@@ -53,19 +53,43 @@ fun HomeScreen(navController: NavController = rememberNavController(),
             MainContent(
                 navController = navController,
                 movieList = getMovies(),
-                favoritesViewModel = viewModel
+                onAddClick = { movie -> viewModel.addFavorites(movie) },
+                onDeleteClick = { movie -> viewModel.removeFavorites(movie) },
+                favorite = { movie -> viewModel.isFavorite(movie = movie) },
+                favoriteIcon = true
             )
         }
     }
 }
 
 @Composable
-fun MainContent(navController: NavController, movieList: List<Movie>, favoritesViewModel: FavoritesViewModel){
+fun MainContent(
+    navController: NavController,
+    movieList: List<Movie>,
+    onAddClick: (Movie) -> Unit = {},
+    onDeleteClick: (Movie) -> Unit = {},
+    favorite: @Composable (Movie) -> Boolean = { false },
+    favoriteIcon: Boolean,
+){
+    /*
     LazyColumn {
         items(items = movieList) { movie ->
             MovieRow(movie = movie) { movieId ->
                 navController.navigate(route = MovieScreens.DetailScreen.name + "/$movieId")
             }
+        }
+    }
+     */
+    LazyColumn {
+        items(movieList) { movie ->
+            MovieRow(
+                movie = movie,
+                onItemClick = { movieId -> navController.navigate(route = MovieScreens.DetailScreen.name + "/$movieId")},
+                onAddClick = { onAddClick(movie) },
+                onDeleteClick = { onDeleteClick(movie) },
+                favorite = favorite(movie),
+                favoriteIcon = favoriteIcon
+            )
         }
     }
 }
