@@ -18,12 +18,13 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.movieapp.models.Movie
 import com.example.movieapp.models.getMovies
+import com.example.movieapp.viewmodels.FavoritesViewModel
 import com.example.movieapp.widgets.MovieRow
 
-@Preview(showBackground = true)
+//@Preview(showBackground = true)
 @Composable
-fun FavoritesScreen(navController: NavController = rememberNavController()) {
-
+fun FavoritesScreen(navController: NavController = rememberNavController(),
+                    viewModel: FavoritesViewModel) {
     Scaffold(
         topBar = {
             TopAppBar(backgroundColor = Color.Cyan, elevation = 3.dp) {
@@ -41,7 +42,12 @@ fun FavoritesScreen(navController: NavController = rememberNavController()) {
             }
         })
     {
-        MainContent(movieList = getMovies().subList(4, 7))
+        MainContent(
+            movieList = viewModel.favoriteMovies
+        )
+
+        //Hardcoded favorites:
+        //MainContent(movieList = getMovies().subList(4, 7))
     }
 }
 

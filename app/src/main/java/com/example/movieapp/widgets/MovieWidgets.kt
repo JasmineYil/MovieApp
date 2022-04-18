@@ -13,23 +13,30 @@ import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberImagePainter
 import coil.transform.CircleCropTransformation
 import com.example.movieapp.models.Movie
 import com.example.movieapp.models.getMovies
+import com.example.movieapp.ui.theme.MovieAppTheme
 
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun MovieRow(movie: Movie = getMovies()[0],
-             onItemClick: (String) -> Unit = {}
+             onItemClick: (String) -> Unit = {},
+
     ){
+    //             content: @Composable () -> Unit = {}
     var movieDescriptions by remember{
         mutableStateOf(false)
     }
@@ -45,10 +52,7 @@ fun MovieRow(movie: Movie = getMovies()[0],
             Surface(modifier = Modifier
                 .padding(12.dp)
                 .size(100.dp)
-                //shape = RectangleShape,
-                //elevation = 6.dp
             ){
-                //Icon(imageVector = Icons.Default.AccountBox, contentDescription = "movie pic")
                 Image(
                     painter = rememberImagePainter(
                         data = movie.images[0] ,
@@ -66,7 +70,6 @@ fun MovieRow(movie: Movie = getMovies()[0],
                     enter = expandVertically(expandFrom = Alignment.Top),
                     exit = shrinkVertically()
                 ) {
-                    // Alle Möglichen Composables aufrufen
                     Column (modifier = Modifier.padding(10.dp, 5.dp)) {
                         Text(text = "Plot: ${movie.plot}")
                         Divider(thickness = 1.dp)
@@ -83,10 +86,10 @@ fun MovieRow(movie: Movie = getMovies()[0],
                         Icon(imageVector = Icons.Default.KeyboardArrowUp, contentDescription = "ArrowUp" )
                     }
                 }
-                /*
-                Andere Möglichkeit:
-                IconButton(onClick = { movieDescriptions = !movieDescriptions}) { ... }
-                 */
+            }
+            // TODO: Soll nicht in FAVORITESSCREEN angezeigt werden
+            Column (modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.End) {
+                FavoriteIcon()
             }
         }
     }
@@ -106,5 +109,36 @@ fun HorizontalScrollableImageView(movie: Movie = getMovies()[0]){
                     contentDescription = "movie image")
             }
         }
+    }
+}
+
+@Composable
+fun FavoriteIcon(
+
+){
+    var iconClick by remember{
+        mutableStateOf(false)
+    }
+    IconToggleButton(checked = iconClick, onCheckedChange = {iconClick = it}) {
+        if(iconClick){
+            Icon(imageVector = Icons.Default.Favorite, contentDescription = "FavoriteClicked",
+                modifier = Modifier.padding(4.dp),
+                Color.Cyan)
+        }
+        else {
+            Icon(imageVector = Icons.Default.FavoriteBorder, contentDescription = "FavoriteNotClicked",
+                modifier = Modifier.padding(4.dp),
+                Color.Cyan)
+        }
+    }
+
+}
+
+
+@Preview(showBackground = true)
+@Composable
+fun DefaultPreview() {
+    MovieAppTheme {
+        MovieRow()
     }
 }

@@ -8,19 +8,20 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.movieapp.models.Movie
 import com.example.movieapp.models.getMovies
+import com.example.movieapp.viewmodels.FavoritesViewModel
 import com.example.movieapp.widgets.HorizontalScrollableImageView
 import com.example.movieapp.widgets.MovieRow
 
-@Preview(showBackground = true)
 @Composable
 fun DetailScreen(navController: NavController = rememberNavController(),
+                 viewModel: FavoritesViewModel,
                  movieId: String? = getMovies()[0].id){
+
     val movie = filterMovie(movieId = movieId)
 
     Scaffold(
@@ -38,7 +39,9 @@ fun DetailScreen(navController: NavController = rememberNavController(),
             }
         }
     ){
-        MainContent(movie = movie)
+        MainContent(
+            movie = movie
+        )
     }
 }
 

@@ -18,46 +18,49 @@ import com.example.movieapp.models.Movie
 import com.example.movieapp.models.getMovies
 import com.example.movieapp.navigation.MovieScreens
 import com.example.movieapp.ui.theme.MovieAppTheme
+import com.example.movieapp.viewmodels.FavoritesViewModel
 import com.example.movieapp.widgets.MovieRow
 
 @Composable
-fun HomeScreen(navController: NavController = rememberNavController()) {
+fun HomeScreen(navController: NavController = rememberNavController(),
+               viewModel: FavoritesViewModel) {
     var showMenu by remember{
         mutableStateOf(false)
     }
     MovieAppTheme {
-        Scaffold(
-            topBar = {
-                TopAppBar(title = { Text(text = "Movies") },
-                    actions = {
-                        IconButton(onClick = { showMenu = !showMenu}) {
-                            Icon(imageVector = Icons.Default.MoreVert, contentDescription = "More")
-                        }
-                        DropdownMenu(expanded = showMenu, onDismissRequest = { showMenu = false }) {
-                            DropdownMenuItem(onClick = { navController.navigate(route = MovieScreens.FavoritesScreen.name) }) {
-                                Row{
-                                    Icon(imageVector = Icons.Default.Favorite,
-                                        contentDescription = "my favorites",
-                                        modifier = Modifier.padding(4.dp))
-                                    Text(text = "Favorites",
-                                        modifier = Modifier
-                                            .padding(4.dp)
-                                            .width(100.dp)
-                                    )
-                                }
+        Scaffold(topBar = {
+            TopAppBar(title = { Text(text = "Movies") },
+                actions = {
+                    IconButton(onClick = { showMenu = !showMenu}) {
+                        Icon(imageVector = Icons.Default.MoreVert, contentDescription = "More")
+                    }
+                    DropdownMenu(expanded = showMenu, onDismissRequest = { showMenu = false }) {
+                        DropdownMenuItem(onClick = { navController.navigate(route = MovieScreens.FavoritesScreen.name) }) {
+                            Row{
+                                Icon(imageVector = Icons.Default.Favorite,
+                                    contentDescription = "my favorites",
+                                    modifier = Modifier.padding(4.dp))
+                                Text(text = "Favorites",
+                                    modifier = Modifier
+                                        .padding(4.dp)
+                                        .width(100.dp))
                             }
                         }
                     }
-                )
+                })
             }
         ){
-            MainContent(navController = navController, movieList = getMovies())
+            MainContent(
+                navController = navController,
+                movieList = getMovies(),
+                favoritesViewModel = viewModel
+            )
         }
     }
 }
 
 @Composable
-fun MainContent(navController: NavController, movieList: List<Movie>){
+fun MainContent(navController: NavController, movieList: List<Movie>, favoritesViewModel: FavoritesViewModel){
     LazyColumn {
         items(items = movieList) { movie ->
             MovieRow(movie = movie) { movieId ->
@@ -66,3 +69,31 @@ fun MainContent(navController: NavController, movieList: List<Movie>){
         }
     }
 }
+
+
+/*
+@Composable
+fun MainContent(navController: NavController, movieList: List<Movie>, favoritesViewModel: FavoritesViewModel){
+    LazyColumn {
+        items(items = movieList) { movie ->
+            MovieRow(movie = movie,
+                onItemClick = { movieId ->
+                    navController.navigate(route = MovieScreens.DetailScreen.name + "/$movieId")
+                    {
+                        FavoriteIcon(
+                            movie = movie,
+                            isFave = favoritesViewModel.isFavorite(movie))
+                        { m ->
+                            if(favoritesViewModel.isFavorite(m)){
+                                favoritesViewModel.removeFromFavorites(m)
+                            } else {
+                                favoritesViewModel.addToFavorites(m)
+                            }
+                        }
+                    }
+                }
+
+        }
+    }
+}
+*/
